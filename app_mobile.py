@@ -279,15 +279,23 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+camera_image = st.camera_input(
+    "📸 Capture an image using your camera",
+    key="skinai_camera_upload",
+)
+
 uploaded_file = st.file_uploader(
-    "Choose an image",
+    "🖼️ Or choose an image from your gallery",
     type=["jpg", "jpeg", "png"],
     key="skinai_image_upload",
 )
 
-if uploaded_file is not None:
+# Use the camera image if captured; otherwise use the uploaded image.
+selected_file = camera_image if camera_image is not None else uploaded_file
+
+if selected_file is not None:
     try:
-        image_bytes = uploaded_file.getvalue()
+        image_bytes = selected_file.getvalue()
         image = Image.open(
             __import__("io").BytesIO(image_bytes)
         ).convert("RGB")
