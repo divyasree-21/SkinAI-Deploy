@@ -203,6 +203,69 @@ st.markdown(
 
 
 # --------------------------------------------------
+# WELCOME SCREEN — no account or signup required
+# --------------------------------------------------
+if not st.session_state.get("skinai_started", False):
+    st.markdown(
+        """
+        <style>
+        .stApp {
+            background: linear-gradient(145deg, #f3fbfc 0%, #edf5fb 58%, #e6f5f2 100%);
+            color: #163447;
+        }
+        [data-testid="stHeader"] { background: transparent; }
+        .block-container { max-width: 1050px; padding-top: 2rem; }
+        .welcome-top { display:flex; align-items:center; gap:12px; color:#155e75;
+            font-weight:800; letter-spacing:.13em; font-size:.9rem; }
+        .medical-mark { width:48px; height:48px; border-radius:16px;
+            display:flex; align-items:center; justify-content:center;
+            background:#d5f2ee; color:#087e8b; font-size:1.8rem; font-weight:800;
+            box-shadow:0 8px 24px rgba(8,126,139,.12); }
+        .welcome-card { margin:2.2rem 0 1rem; padding:clamp(1.5rem,5vw,4rem);
+            border:1px solid #d7e9ee; border-radius:30px;
+            background:rgba(255,255,255,.88);
+            box-shadow:0 24px 70px rgba(29,78,96,.09); }
+        .welcome-eyebrow { color:#087e8b; font-size:.76rem; font-weight:800;
+            letter-spacing:.16em; text-transform:uppercase; }
+        .welcome-card h1 { color:#12384a; font-size:clamp(2.3rem,6vw,4.1rem);
+            line-height:1.08; margin:.8rem 0 1rem; }
+        .welcome-card p { color:#4a6675; max-width:680px; font-size:1.05rem; line-height:1.8; }
+        .welcome-points { display:flex; flex-wrap:wrap; gap:10px; margin-top:1.5rem; }
+        .welcome-chip { border:1px solid #d3e9e9; border-radius:999px; padding:8px 12px;
+            color:#245c69; background:#f4fbfa; font-size:.86rem; }
+        .welcome-note { color:#637b87; font-size:.82rem; line-height:1.65; margin-top:1.2rem; }
+        div.stButton > button[kind="primary"] { background:#087e8b; color:#fff;
+            border:0; border-radius:14px; min-height:3.2rem; font-size:1.05rem; }
+        div.stButton > button[kind="primary"]:hover { background:#066875; border:0; }
+        @media (max-width:600px) { .welcome-card { border-radius:22px; padding:1.35rem; } }
+        </style>
+        <div class="welcome-top"><div class="medical-mark">+</div><span>SKINAI · EARLY SCREENING RESEARCH</span></div>
+        <div class="welcome-card">
+          <div class="welcome-eyebrow">EXPLAINABLE AI · HUMAN-CENTRED CARE</div>
+          <h1>A thoughtful first step<br>for skin health.</h1>
+          <p>Explore an AI-assisted skin image screening prototype with a visual explanation of the model’s attention. No account or signup is needed to begin.</p>
+          <div class="welcome-points">
+            <span class="welcome-chip">＋ Camera or gallery</span>
+            <span class="welcome-chip">＋ AI-assisted screening</span>
+            <span class="welcome-chip">＋ Visual heatmap</span>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    _, start_col, _ = st.columns([1, 1.4, 1])
+    with start_col:
+        if st.button("Start screening  →", type="primary", use_container_width=True):
+            st.session_state["skinai_started"] = True
+            st.rerun()
+    st.markdown(
+        '<div class="welcome-note" style="text-align:center">Research prototype only. It does not diagnose skin conditions or replace advice from a qualified healthcare professional.</div>',
+        unsafe_allow_html=True,
+    )
+    st.stop()
+
+
+# --------------------------------------------------
 # HEADER AND HERO
 # --------------------------------------------------
 header_left, header_right = st.columns([1.5, 1])
@@ -290,7 +353,7 @@ uploaded_file = st.file_uploader(
     key="skinai_image_upload",
 )
 
-# Use the camera image if captured; otherwise use the uploaded image.
+# Prefer the camera capture when both inputs contain an image.
 selected_file = camera_image if camera_image is not None else uploaded_file
 
 if selected_file is not None:
