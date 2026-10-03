@@ -6,7 +6,12 @@ from torchvision import transforms
 
 MODEL_PATH = "Models/student_model_gn_distilled.onnx"
 
-CLASS_NAMES = ["AK", "BCC"]
+
+CLASS_NAMES = [
+    "AK (Actinic Keratosis)",
+    "BCC (Basal Cell Carcinoma)"
+]
+
 
 
 # Load ONNX model
