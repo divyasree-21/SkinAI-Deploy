@@ -11,6 +11,15 @@ from history_db import (
 )
 
 from inference import predict, CLASS_NAMES
+
+# Display-friendly labels; keep CLASS_NAMES unchanged for model indexing and storage.
+DISPLAY_NAMES = {
+    "AK": "AK (Actinic Keratosis)",
+    "BCC": "BCC (Basal Cell Carcinoma)",
+}
+
+def display_name(class_name):
+    return DISPLAY_NAMES.get(str(class_name), str(class_name))
 from gradcam_app import generate_gradcam
 
 
@@ -448,7 +457,7 @@ if selected_file is not None:
                 f'<div class="result-card">'
                 f'<div class="section-label">MODEL PREDICTION</div>'
                 f'<div class="result-class">'
-                f'{result["predicted_class"]}</div>'
+                f'{display_name(result["predicted_class"])}</div>'
                 f'<div class="muted">Predicted class from the '
                 f'configured prototype classes</div>'
                 f'</div>',
@@ -475,7 +484,7 @@ if selected_file is not None:
 
             for index, class_name in enumerate(CLASS_NAMES):
                 score = float(result["probabilities"][index])
-                st.write(f"**{class_name}** · {score * 100:.2f}%")
+                st.write(f"**{display_name(class_name)}** · {score * 100:.2f}%")
                 st.progress(min(max(score, 0.0), 1.0))
 
             st.divider()
@@ -598,13 +607,13 @@ if history:
         # Handle probabilities stored as either a list or dictionary
         if isinstance(probabilities, list):
             probability_text = ", ".join(
-                f"{CLASS_NAMES[i]}: {float(value) * 100:.1f}%"
+                f"{display_name(CLASS_NAMES[i])}: {float(value) * 100:.1f}%"
                 for i, value in enumerate(probabilities)
                 if i < len(CLASS_NAMES)
             )
         elif isinstance(probabilities, dict):
             probability_text = ", ".join(
-                f"{name}: {float(value) * 100:.1f}%"
+                f"{display_name(name)}: {float(value) * 100:.1f}%"
                 for name, value in probabilities.items()
             )
         else:
@@ -612,7 +621,7 @@ if history:
 
         display_records.append({
             "Date and time": record["Date and time"],
-            "Prediction": record["Predicted class"],
+            "Prediction": display_name(record["Predicted class"]),
             "Confidence (%)": record["Confidence (%)"],
             "Class probabilities": probability_text,
         })
